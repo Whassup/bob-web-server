@@ -5,6 +5,6 @@ import { createServer } from './create-server/create-server.ts';
 
 const server = createServer()
 
-text(server, "/text", "here is some text")
+text(server, "/text*/**", "here is some text")
 html(server, "/html", "<h1>here is some html text</h1>")
 json(server, "/json", { test: "Okay", number: 1, array: [1, "two", { tree: "four" }] })

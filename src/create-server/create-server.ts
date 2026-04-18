@@ -1,5 +1,6 @@
 import http2 from 'http2';
 import fs from 'fs';
+import path from 'path'
 
 export interface BobWebServer {
     _server: http2.Http2SecureServer,
@@ -21,11 +22,11 @@ export const createServer = (): BobWebServer => {
     server.on('error', (err) => console.error(err));
 
     server.on('stream', (stream: http2.ServerHttp2Stream, headers) => {
-        const requestPath = headers[':path'];
+        const requestPath: string = headers[':path'] ?? "";
         var path_match: {
             path: string,
             respondFn: Function
-        } | undefined = _paths.find(({ path }) => requestPath == path)
+        } | undefined = _paths.find(({ path: _path }) => path.matchesGlob(requestPath, _path))
 
         if (path_match != undefined) {
             path_match.respondFn(stream, headers)
