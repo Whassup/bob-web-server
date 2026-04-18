@@ -10,6 +10,9 @@ export interface BobWebServer {
     }[]
 }
 
+const isPathParam: RegExp = /:([A-Za-z_][A-Za-z0-9_]*)/g
+const isPathParamWithGlobOverride: RegExp = /:([A-Za-z_][A-Za-z0-9_]*){(.*)}/g
+
 export const createServer = (): BobWebServer => {
     const _paths: {
         path: string,
@@ -23,10 +26,13 @@ export const createServer = (): BobWebServer => {
 
     server.on('stream', (stream: http2.ServerHttp2Stream, headers) => {
         const requestPath: string = headers[':path'] ?? "";
+
         var path_match: {
             path: string,
             respondFn: Function
-        } | undefined = _paths.find(({ path: _path }) => path.matchesGlob(requestPath, _path))
+        } | undefined = _paths.find(({ path: _path }) => {
+            return path.matchesGlob(requestPath, _path.replaceAll(isPathParamWithGlobOverride, "$2").replaceAll(isPathParam, "*"))
+        })
 
         if (path_match != undefined) {
             path_match.respondFn(stream, headers)
