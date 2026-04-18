@@ -20,6 +20,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "node --experimental-strip-types ./src/index.ts",
+    "watch": "node --watch --experimental-strip-types ./src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
